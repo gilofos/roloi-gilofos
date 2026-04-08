@@ -5,7 +5,7 @@
     <title>ΓΗΛΟΦΟΣ - Seismos Watch</title>
     <style>
         body { background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-        canvas { width: 600px; height: 600px; max-width: 90vw; max-height: 90vw; aspect-ratio: 1 / 1; }
+        canvas { width: 600px; height: 600px; max-width: 95vw; max-height: 95vw; aspect-ratio: 1 / 1; }
     </style>
 </head>
 <body>
@@ -16,31 +16,33 @@
     const img = new Image();
     img.src = 'face.png';
 
-    let lastSeismos = "ΑΝΑΜΟΝΗ ΔΕΔΟΜΕΝΩΝ...";
-    let seismosColor = "#39FF14"; // Ξεκινάει πράσινο
+    let lastSeismos = "ΑΝΑΖΗΤΗΣΗ ΣΕΙΣΜΩΝ...";
+    let seismosColor = "#39FF14";
 
-    // ΛΕΙΤΟΥΡΓΙΑ ΓΙΑ ΕΛΕΓΧΟ ΣΕΙΣΜΩΝ (Από USGS/EMSC)
+    // ΛΕΙΤΟΥΡΓΙΑ ΓΙΑ ΕΛΕΓΧΟ ΣΕΙΣΜΩΝ (EMSC API - Πιο συμβατό με GitHub)
     async function checkSeismos() {
         try {
-            // Ψάχνουμε σεισμούς στην Ελλάδα (περιοχή γύρω από 38, 23)
-            const response = await fetch('https://usgs.gov' + new Date(Date.now() - 86400000).toISOString() + '&minmagnitude=3&latitude=38&longitude=23&maxradiuskm=300');
+            // Ψάχνουμε τους τελευταίους σεισμούς στην Ελλάδα
+            const response = await fetch('https://seismicportal.eu');
             const data = await response.json();
             
-            if (data.features.length > 0) {
+            if (data.features && data.features.length > 0) {
                 const latest = data.features[0].properties;
                 const mag = latest.mag;
-                const place = latest.place;
-                lastSeismos = "ΣΕΙΣΜΟΣ: " + mag + "R - " + place.split(',')[0].toUpperCase();
-                seismosColor = mag >= 4 ? "#FF0000" : "#FFA500"; // Κόκκινο αν είναι μεγάλος, πορτοκαλί αν είναι μέτριος
+                const region = latest.flynn_region.toUpperCase();
+                lastSeismos = `ΣΕΙΣΜΟΣ: ${mag}R - ${region}`;
+                seismosColor = mag >= 4 ? "#FF0000" : (mag >= 3 ? "#FFA500" : "#39FF14");
             } else {
                 lastSeismos = "ΗΣΥΧΙΑ ΣΤΟΝ ΓΗΛΟΦΟ";
                 seismosColor = "#39FF14";
             }
-        } catch (e) { lastSeismos = "ΣΦΑΛΜΑ ΔΙΚΤΥΟΥ"; }
+        } catch (e) { 
+            lastSeismos = "ΑΝΑΜΟΝΗ ΔΙΚΤΥΟΥ..."; 
+        }
     }
 
     checkSeismos();
-    setInterval(checkSeismos, 300000); // Έλεγχος κάθε 5 λεπτά
+    setInterval(checkSeismos, 60000); // Έλεγχος κάθε λεπτό
 
     function draw() {
         const now = new Date();
@@ -54,25 +56,26 @@
         const green = "#39FF14";
         const cx = 400, cy = 400;
 
-        // --- ΕΜΦΑΝΙΣΗ ΣΤΟΙΧΕΙΩΝ ---
+        // --- ΕΜΦΑΝΙΣΗ ΣΤΟΙΧΕΙΩΝ (Πιο μακριά από το κέντρο για να μη μπλέκονται) ---
         ctx.textAlign = "center";
         
-        // 1. Ημερομηνία (Πάνω από το κέντρο)
+        // 1. Ημερομηνία (Πιο πάνω, κοντά στο 12)
         ctx.fillStyle = green;
-        ctx.font = "25px Arial";
-        const dateStr = now.toLocaleDateString('el-GR', { weekday: 'long', day: 'numeric', month: 'long' });
-        ctx.fillText(dateStr.toUpperCase(), cx, cy - 140);
+        ctx.font = "bold 26px Arial";
+        const options = { weekday: 'long', day: 'numeric', month: 'long' };
+        const dateStr = now.toLocaleDateString('el-GR', options).toUpperCase();
+        ctx.fillText(dateStr, cx, 280);
 
-        // 2. Σεισμός (Κάτω από το κέντρο)
+        // 2. Σεισμός (Πιο κάτω, κοντά στο 6)
         ctx.fillStyle = seismosColor;
-        ctx.font = "bold 28px Arial";
-        ctx.fillText(lastSeismos, cx, cy + 140);
+        ctx.font = "bold 24px Arial";
+        ctx.fillText(lastSeismos, cx, 550);
 
         // --- ΔΕΙΚΤΕΣ ---
-        drawH(h * 30, 200, 15, green);
-        drawH(m * 6, 300, 10, green);
+        drawH(h * 30, 180, 15, green);
+        drawH(m * 6, 280, 10, green);
 
-        // --- ΓΗΛΟΦΟΣ ΣΤΑ ΔΕΥΤΕΡΟΛΕΠΤΑ ---
+        // --- ΓΗΛΟΦΟΣ (Δευτερόλεπτα) ---
         const ang = s * 6;
         const rad = (ang - 90) * Math.PI / 180;
         ctx.beginPath(); ctx.strokeStyle = green; ctx.lineWidth = 2;
@@ -82,8 +85,8 @@
         ctx.save();
         ctx.translate(cx, cy); ctx.rotate(rad);
         ctx.font = "bold 42px Arial"; ctx.textBaseline = "bottom"; 
-        if (ang > 0 && ang < 180) { ctx.fillText("ΓΗΛΟΦΟΣ", 200, -5); } 
-        else { ctx.rotate(Math.PI); ctx.fillText("ΓΗΛΟΦΟΣ", -200, -5); }
+        if (ang > 0 && ang < 180) { ctx.fillText("ΓΗΛΟΦΟΣ", 190, -5); } 
+        else { ctx.rotate(Math.PI); ctx.fillText("ΓΗΛΟΦΟΣ", -190, -5); }
         ctx.restore();
 
         ctx.beginPath(); ctx.arc(cx, cy, 12, 0, 2*Math.PI); ctx.fillStyle = green; ctx.fill();
