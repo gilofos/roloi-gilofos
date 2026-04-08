@@ -1,19 +1,103 @@
-ctx.clearRect(0, 0, 800, 800);
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ΩΡΑ ΓΗΛΟΦΟΥ</title>
+    <style>
+        body { background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
+        canvas { 
+            width: 95vmin; 
+            height: 95vmin; 
+            max-width: 800px;
+            max-height: 800px;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+<canvas id="c" width="800" height="800"></canvas>
+<script>
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    img.src = 'face.png';
+
+    function draw() {
+        const now = new Date();
+        const s = now.getSeconds() + now.getMilliseconds() / 1000;
+        const m = now.getMinutes() + s / 60;
+        const h = (now.getHours() % 12) + m / 60;
         
+        // Μαύρο φόντο για να μην έχει άσπρα στεφάνια
+        ctx.fillStyle = "#000";
+        ctx.fillRect(0, 0, 800, 800);
+
         const green = "#39FF14";
         const cx = 400, cy = 400;
 
-        // 1. ΣΧΕΔΙΑΣΗ FACE - ΤΗΝ ΑΝΟΙΓΟΥΜΕ ΓΙΑ ΝΑ ΣΤΡΟΓΓΥΛΕΨΕΙ
+        // 1. ΣΧΕΔΙΑΣΗ ΚΑΝΤΡΑΝ (FACE) - ΤΕΛΕΙΟΣ ΚΥΚΛΟΣ
         if (img.complete) {
-            // *ΔΙΟΡΘΩΣΗ:* Αυξάνουμε το πλάτος (από 760 σε 840) 
-            // και την κεντράρουμε για να μην ξεχειλώνει
-            ctx.drawImage(img, -20, 15, 840, 770); 
+            // Χρησιμοποιούμε 800x800 για να είναι απόλυτα συμμετρικό
+            ctx.drawImage(img, 0, 0, 800, 800);
         }
 
-        // 2. ΠΛΑΙΣΙΟ - ΛΕΠΤΟ ΚΑΙ ΕΠΑΓΓΕΛΜΑΤΙΚΟ
+        // 2. ΠΡΑΣΙΝΟ ΠΛΑΙΣΙΟ - ΛΕΠΤΟ
         ctx.beginPath();
-        // Το μεγαλώνουμε λίγο για να "αγκαλιάσει" το νέο πλάτος
         ctx.arc(cx, cy, 396, 0, 2 * Math.PI);
         ctx.strokeStyle = green;
-        ctx.lineWidth = 4;
+        ctx.lineWidth = 5;
         ctx.stroke();
+
+        // 3. ΔΕΙΚΤΕΣ (ΩΡΑ - ΛΕΠΤΟ)
+        drawH(h * 30, 200, 14, green); // Ώρα
+        drawH(m * 6, 310, 8, green);   // Λεπτό
+
+        // 4. ΔΕΥΤΕΡΟΛΕΠΤΗΣ (ΓΗΛΟΦΟΣ)
+        const ang = s * 6;
+        const rad = (ang - 90) * Math.PI / 180;
+        ctx.beginPath();
+        ctx.strokeStyle = green;
+        ctx.lineWidth = 2;
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + 310 * Math.cos(rad), cy + 310 * Math.sin(rad));
+        ctx.stroke();
+
+        // Κείμενο ΓΗΛΟΦΟΣ πάνω στον δείκτη
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(rad);
+        ctx.font = "bold 34px Arial";
+        ctx.fillStyle = green;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "bottom"; 
+        if (ang > 0 && ang < 180) {
+            ctx.fillText("ΓΗΛΟΦΟΣ", 160, -5); 
+        } else {
+            ctx.rotate(Math.PI);
+            ctx.fillText("ΓΗΛΟΦΟΣ", -160, -5);
+        }
+        ctx.restore();
+
+        // Κεντρική μπίλια
+        ctx.beginPath(); ctx.arc(cx, cy, 8, 0, 2*Math.PI); ctx.fillStyle = green; ctx.fill();
+        
+        requestAnimationFrame(draw);
+    }
+
+    function drawH(a, l, w, c) {
+        const r = (a - 90) * Math.PI / 180;
+        ctx.beginPath(); 
+        ctx.strokeStyle = c; 
+        ctx.lineWidth = w; 
+        ctx.lineCap = "round";
+        ctx.moveTo(400, 400); 
+        ctx.lineTo(400 + l * Math.cos(r), 400 + l * Math.sin(r));
+        ctx.stroke();
+    }
+
+    img.onload = () => draw();
+    if (img.complete) draw();
+</script>
+</body>
+</html>
