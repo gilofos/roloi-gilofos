@@ -1,128 +1,105 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
-    <link rel="manifest" href="manifest.json?v=4">
-    <link rel="icon" type="image/png" href="icon2026.png">
-    <link rel="apple-touch-icon" href="icon2026.png">
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#000000">
-    
-    <title>ΩΡΑ ΓΗΛΟΦΟΥ</title>
-
-    <style>
-        body { 
-            background: #000; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            margin: 0; 
-            overflow: hidden; 
-        }
-        canvas { 
-            /* ΕΔΩ ΕΙΝΑΙ Η ΡΥΘΜΙΣΗ ΓΙΑ ΝΑ ΕΙΝΑΙ ΤΕΛΕΙΟΣ ΚΥΚΛΟΣ */
-            width: 95vmin; 
-            height: 95vmin; 
-            max-width: 800px;
-            max-height: 800px;
-            object-fit: contain;
-            display: block;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ΩΡΑ ΓΗΛΟΦΟΥ</title>
+    <style>
+        body { 
+            background: #000; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            overflow: hidden; 
+        }
+        canvas { 
+            width: auto;
+            height: auto;
+            max-width: 98vw;
+            max-height: 98vh;
+            aspect-ratio: 1 / 1;
+            object-fit: contain;
+            /* Αφαιρούμε οποιοδήποτε λευκό περιθώριο */
+            background: transparent;
+        }
+    </style>
 </head>
 <body>
-
 <canvas id="c" width="800" height="800"></canvas>
-
 <script>
-    const canvas = document.getElementById('c');
-    const ctx = canvas.getContext('2d');
-    const img = new Image();
-    img.src = 'face.png';
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    img.src = 'face.png';
 
-    function draw() {
-        const now = new Date();
-        const s = now.getSeconds() + now.getMilliseconds() / 1000;
-        const m = now.getMinutes() + s / 60;
-        const h = (now.getHours() % 12) + m / 60;
-        
-        ctx.clearRect(0, 0, 800, 800);
-        
-        const green = "#39FF14";
-        const cx = 400, cy = 400;
+    function draw() {
+        const now = new Date();
+        const s = now.getSeconds() + now.getMilliseconds() / 1000;
+        const m = now.getMinutes() + s / 60;
+        const h = (now.getHours() % 12) + m / 60;
+        
+        // Καθαρίζουμε τον καμβά με μαύρο χρώμα για να μην ασπρίζει τίποτα
+        ctx.fillStyle = "#000";
+        ctx.fillRect(0, 0, 800, 800);
 
-        // 1. ΤΕΛΕΙΟ ΕΞΩΤΕΡΙΚΟ ΠΛΑΙΣΙΟ
-        ctx.beginPath();
-        ctx.arc(cx, cy, 395, 0, 2 * Math.PI);
-        ctx.strokeStyle = green;
-        ctx.lineWidth = 5;
-        ctx.stroke();
+        const green = "#39FF14";
+        const cx = 400, cy = 400;
 
-        // 2. ΣΧΕΔΙΑΣΗ FACE (ΚΕΝΤΡΑΡΙΣΜΕΝΟ ΧΩΡΙΣ ΠΑΡΑΜΟΡΦΩΣΗ)
-        if (img.complete) {
-            ctx.drawImage(img, 15, 15, 770, 770);
-        }
-        
-        // Δείκτες Ώρας και Λεπτών
-        drawH(h * 30, 210, 12, green); // ΩΡΑ
-        drawH(m * 6, 310, 7, green);   // ΛΕΠΤΟ
+        // 1. ΣΧΕΔΙΑΣΗ FACE
+        if (img.complete) {
+            ctx.drawImage(img, 5, 5, 790, 790);
+        }
 
-        // 3. ΔΕΥΤΕΡΟΛΕΠΤΗΣ (ΓΗΛΟΦΟΣ) - ΚΟΝΤΟΣ & ΚΟΜΨΟΣ
-        const ang = s * 6;
-        const rad = (ang - 90) * Math.PI / 180;
-        
-        ctx.beginPath();
-        ctx.strokeStyle = green;
-        ctx.lineWidth = 1.5;
-        ctx.moveTo(cx, cy);
-        // *ΤΟΜΗ:* Από 360 το πήγαμε **310**. Τώρα ο δείκτης είναι **πολύ κοντός**!
-        ctx.lineTo(cx + 310 * Math.cos(rad), cy + 310 * Math.sin(rad));
-        ctx.stroke();
+        // 2. ΠΛΑΙΣΙΟ - ΠΡΑΣΙΝΟ ΣΤΕΦΑΝΙ (ΑΚΡΙΒΩΣ ΣΤΗΝ ΑΚΡΗ ΤΟΥ FACE)
+        ctx.beginPath();
+        ctx.arc(cx, cy, 396, 0, 2 * Math.PI);
+        ctx.strokeStyle = green;
+        ctx.lineWidth = 8;
+        ctx.stroke();
 
-        ctx.save();
-        ctx.translate(cx, cy);
-  0;   ctx.rotate(rad);
-        ctx.font = "bold 34px Arial";
-        ctx.fillStyle = green;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "bottom"; 
+        // 3. ΔΕΙΚΤΕΣ (ΩΡΑ - ΛΕΠΤΟ)
+        drawH(h * 30, 200, 14, green);
+        drawH(m * 6, 310, 8, green);
 
-        // *ΤΟΜΗ:* Κεντράρουμε τη λέξη "ΓΗΛΟΦΟΣ" πιο μέσα.
-        if (ang > 0 && ang < 180) {
-            ctx.fillText("ΓΗΛΟΦΟΣ", 160, -5); 
-        } else {
-            ctx.rotate(Math.PI);
-            ctx.fillText("ΓΗΛΟΦΟΣ", -160, -5);
-        }
-        ctx.restore();
+        // 4. ΔΕΥΤΕΡΟΛΕΠΤΗΣ - ΚΟΝΤΟΣ & ΚΟΜΨΟΣ
+        const ang = s * 6;
+        const rad = (ang - 90) * Math.PI / 180;
+        ctx.beginPath();
+        ctx.strokeStyle = green;
+        ctx.lineWidth = 2;
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + 315 * Math.cos(rad), cy + 315 * Math.sin(rad));
+        ctx.stroke();
 
-        // Κεντρική μπίλια
-        ctx.beginPath(); 
-        ctx.arc(cx, cy, 7, 0, 2*Math.PI); 
-        ctx.fillStyle = green; 
-        ctx.fill();
-        
-        requestAnimationFrame(draw);
-    }
+        // ΚΕΙΜΕΝΟ ΓΗΛΟΦΟΣ
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(rad);
+        ctx.font = "bold 34px Arial";
+        ctx.fillStyle = green;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "bottom"; 
+        if (ang > 0 && ang < 180) {
+            ctx.fillText("ΓΗΛΟΦΟΣ", 160, -5); 
+        } else {
+            ctx.rotate(Math.PI);
+            ctx.fillText("ΓΗΛΟΦΟΣ", -160, -5);
+        }
+        ctx.restore();
 
-    function drawH(a, l, w, c) {
-        const r = (a - 90) * Math.PI / 180;
-        ctx.beginPath(); 
-        ctx.strokeStyle = c;
-        ctx.lineWidth = w; 
-        ctx.lineCap = "round";
-        ctx.moveTo(400, 400); 
-        ctx.lineTo(400 + l * Math.cos(r), 400 + l * Math.sin(r));
-        ctx.stroke();
-    }
+        // ΚΕΝΤΡΟ
+        ctx.beginPath(); ctx.arc(cx, cy, 9, 0, 2*Math.PI); ctx.fillStyle = green; ctx.fill();
+        requestAnimationFrame(draw);
+    }
 
-    img.onload = () => draw();
+    function drawH(a, l, w, c) {
+        const r = (a - 90) * Math.PI / 180;
+        ctx.beginPath(); ctx.strokeStyle = c; ctx.lineWidth = w; ctx.lineCap = "round";
+        ctx.moveTo(400, 400); ctx.lineTo(400 + l * Math.cos(r), 400 + l * Math.sin(r)); ctx.stroke();
+    }
+    img.onload = () => draw();
 </script>
 </body>
 </html>
