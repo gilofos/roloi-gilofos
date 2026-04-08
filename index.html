@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <link rel="manifest" href="manifest.json">
+    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#000000">
     
-    <title>ΓΗΛΟΦΟΣ - On Top Alignment</title>
+    <title>ΓΗΛΟΦΟΣ - Ρολόι</title>
     <style>
         body { 
             background: #000; 
@@ -18,7 +22,6 @@
             margin: 0; 
             overflow: hidden; 
         }
-        /* Τέλειος κύκλος */
         canvas { 
             width: 600px; 
             height: 600px; 
@@ -48,11 +51,9 @@
         const green = "#39FF14";
         const cx = 400, cy = 400;
 
-        // 1. Δείκτες Ώρας & Λεπτών
         drawH(h * 30, 200, 15, green);
         drawH(m * 6, 300, 10, green);
 
-        // 2. ΔΕΥΤΕΡΟΛΕΠΤΑ & ΓΗΛΟΦΟΣ
         const ang = s * 6;
         const rad = (ang - 90) * Math.PI / 180;
         
@@ -63,15 +64,12 @@
         ctx.lineTo(cx + 360 * Math.cos(rad), cy + 360 * Math.sin(rad));
         ctx.stroke();
 
-        // 3. Η ΛΕΞΗ ΠΑΝΩ ΣΤΟ ΔΕΙΚΤΗ
         ctx.save();
         ctx.translate(cx, cy);
         ctx.rotate(rad);
-
         ctx.font = "bold 42px Arial";
         ctx.fillStyle = green;
         ctx.textAlign = "center";
-        
         ctx.textBaseline = "bottom"; 
 
         if (ang > 0 && ang < 180) {
@@ -82,7 +80,6 @@
         }
         ctx.restore();
 
-        // Κέντρο
         ctx.beginPath(); 
         ctx.arc(cx, cy, 12, 0, 2*Math.PI); 
         ctx.fillStyle = green; 
