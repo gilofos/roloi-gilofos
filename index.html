@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <link rel="manifest" href="manifest.json?v=3">
+    <link rel="manifest" href="manifest.json?v=4">
     <link rel="icon" type="image/png" href="icon2026.png">
     <link rel="apple-touch-icon" href="icon2026.png">
     
@@ -14,6 +14,7 @@
     <meta name="theme-color" content="#000000">
     
     <title>ΩΡΑ ΓΗΛΟΦΟΥ</title>
+
     <style>
         body { 
             background: #000; 
@@ -25,16 +26,20 @@
             overflow: hidden; 
         }
         canvas { 
-            width: 600px; 
-            height: 600px; 
-            max-width: 90vw; /* Λίγο "αέρα" στο κινητό */
-            max-height: 90vw; 
-            aspect-ratio: 1 / 1; 
+            /* ΕΔΩ ΕΙΝΑΙ Η ΡΥΘΜΙΣΗ ΓΙΑ ΝΑ ΜΗΝ ΕΙΝΑΙ ΑΥΓΟΥΛΑΚΙ */
+            width: 92vmin; 
+            height: 92vmin; 
+            max-width: 800px;
+            max-height: 800px;
+            object-fit: contain;
+            display: block;
         }
     </style>
 </head>
 <body>
+
 <canvas id="c" width="800" height="800"></canvas>
+
 <script>
     const canvas = document.getElementById('c');
     const ctx = canvas.getContext('2d');
@@ -52,71 +57,32 @@
         const green = "#39FF14";
         const cx = 400, cy = 400;
 
-        // 1. ΣΧΕΔΙΑΣΗ ΕΞΩΤΕΡΙΚΟΥ ΠΛΑΙΣΙΟΥ (ΚΥΚΛΟΣ) - ΤΩΡΑ ΠΟΛΥ ΛΕΠΤΟΤΕΡΟ
+        // 1. ΤΕΛΕΙΟ ΕΞΩΤΕΡΙΚΟ ΠΛΑΙΣΙΟ
         ctx.beginPath();
-        ctx.arc(cx, cy, 390, 0, 2 * Math.PI); // Σχεδόν στην άκρη του canvas
+        ctx.arc(cx, cy, 395, 0, 2 * Math.PI);
         ctx.strokeStyle = green;
-        ctx.lineWidth = 4; // ΠΟΛΥ ΛΕΠΤΟΤΕΡΟ ΠΛΑΙΣΙΟ
+        ctx.lineWidth = 5;
         ctx.stroke();
 
-        // 2. ΣΧΕΔΙΑΣΗ ΤΗΣ ΕΙΚΟΝΑΣ (FACE) ΜΕΣΑ ΣΤΟ ΠΛΑΙΣΙΟ
-        if (img.complete) ctx.drawImage(img, 10, 10, 780, 780);
+        // 2. ΣΧΕΔΙΑΣΗ FACE (ΚΕΝΤΡΑΡΙΣΜΕΝΟ)
+        if (img.complete) {
+            ctx.drawImage(img, 15, 15, 770, 770);
+        }
         
-        // Σχεδίαση Δεικτών (Ώρα, Λεπτό) - ΜΕΙΩΣΗ ΠΑΧΟΥΣ
-        drawH(h * 30, 200, 10, green); // Ώρα (10px αντί για 15)
-        drawH(m * 6, 300, 6, green);  // Λεπτό (6px αντί για 10)
+        // Δείκτες Ώρας και Λεπτών
+        drawH(h * 30, 210, 12, green); // ΩΡΑ
+        drawH(m * 6, 310, 7, green);   // ΛΕΠΤΟ
 
-        // 3. ΔΕΥΤΕΡΟΛΕΠΤΗΣ (ΓΗΛΟΦΟΣ) - Η ΜΕΓΑΛΗ ΕΠΕΜΒΑΣΗ ΕΓΙΝΕ ΕΔΩ!
+        // 3. ΔΕΥΤΕΡΟΛΕΠΤΗΣ (ΓΗΛΟΦΟΣ) - ΚΟΝΤΟΣ & ΚΟΜΨΟΣ
         const ang = s * 6;
         const rad = (ang - 90) * Math.PI / 180;
         
         ctx.beginPath();
         ctx.strokeStyle = green;
-        ctx.lineWidth = 1; // ΠΟΛΥ ΛΕΠΤΟΤΕΡΟΣ ΔΕΙΚΤΗΣ
+        ctx.lineWidth = 1.5;
         ctx.moveTo(cx, cy);
-        
-        // *ΤΟΜΗ:* Από 360 το πήγαμε **315**. Τώρα ο δείκτης είναι **πολύ κοντός** και δεν φτάνει στις γραμμούλες!
-        ctx.lineTo(cx + 315 * Math.cos(rad), cy + 315 * Math.sin(rad));
+        // Σταματάει στα 310px για να μην ακουμπάει τις γραμμούλες
+        ctx.lineTo(cx + 310 * Math.cos(rad), cy + 310 * Math.sin(rad));
         ctx.stroke();
 
-        ctx.save();
-        ctx.translate(cx, cy);
-        ctx.rotate(rad);
-        ctx.font = "bold 34px Arial"; // ΠΟΛΥ ΜΙΚΡΟΤΕΡΗ ΓΡΑΜΜΑΤΟΣΕΙΡΑ
-        ctx.fillStyle = green;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "bottom"; 
-
-        // *ΤΟΜΗ:* Κεντράρουμε τη λέξη "ΓΗΛΟΦΟΣ" πιο μέσα. Από 200 το πήγαμε **150**.
-        if (ang > 0 && ang < 180) {
-            ctx.fillText("ΓΗΛΟΦΟΣ", 150, -5); 
-        } else {
-            ctx.rotate(Math.PI);
-            ctx.fillText("ΓΗΛΟΦΟΣ", -150, -5);
-        }
-        ctx.restore();
-
-        // Κεντρική τελεία - ΜΙΚΡΟΤΕΡΗ
-        ctx.beginPath(); 
-        ctx.arc(cx, cy, 6, 0, 2*Math.PI); 
-        ctx.fillStyle = green; 
-        ctx.fill();
-        
-        requestAnimationFrame(draw);
-    }
-
-    function drawH(a, l, w, c) {
-        const r = (a - 90) * Math.PI / 180;
-        ctx.beginPath(); 
-        ctx.strokeStyle = c;
-        ctx.lineWidth = w; 
-        ctx.lineCap = "round";
-        ctx.moveTo(400, 400); 
-        ctx.lineTo(400 + l * Math.cos(r), 400 + l * Math.sin(r));
-        ctx.stroke();
-    }
-
-    img.onload = () => draw();
-</script>
-</body>
-</html>
+        ctx.
