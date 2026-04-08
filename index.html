@@ -5,18 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ΩΡΑ ΓΗΛΟΦΟΥ</title>
     <style>
-        body { background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
+        body { 
+            background: #000; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            overflow: hidden; 
+        }
         canvas { 
-            width: 95vmin; 
-            height: 95vmin; 
-            max-width: 800px;
-            max-height: 800px;
+            /* Κλείδωσε τις διαστάσεις για να μην ξαναγίνει "αυγό" */
+            width: auto;
+            height: auto;
+            max-width: 98vw;
+            max-height: 98vh;
+            aspect-ratio: 1 / 1;
             object-fit: contain;
+            background: #000;
         }
     </style>
 </head>
 <body>
-<canvas id="c" width="800" height="800"></canvas>
+<canvas id="c" width="1000" height="1000"></canvas>
 <script>
     const canvas = document.getElementById('c');
     const ctx = canvas.getContext('2d');
@@ -29,75 +40,67 @@
         const m = now.getMinutes() + s / 60;
         const h = (now.getHours() % 12) + m / 60;
         
-        // Μαύρο φόντο για να μην έχει άσπρα στεφάνια
         ctx.fillStyle = "#000";
-        ctx.fillRect(0, 0, 800, 800);
+        ctx.fillRect(0, 0, 1000, 1000);
 
         const green = "#39FF14";
-        const cx = 400, cy = 400;
+        const cx = 500, cy = 500;
 
-        // 1. ΣΧΕΔΙΑΣΗ ΚΑΝΤΡΑΝ (FACE) - ΤΕΛΕΙΟΣ ΚΥΚΛΟΣ
+        // 1. ΣΧΕΔΙΑΣΗ FACE (ΧΩΡΙΣ ΖΟΥΛΗΓΜΑ - 1000x1000)
         if (img.complete) {
-            // Χρησιμοποιούμε 800x800 για να είναι απόλυτα συμμετρικό
-            ctx.drawImage(img, 0, 0, 800, 800);
+            // Την σχεδιάζουμε τέλεια συμμετρική για να μην πατιούνται οι αριθμοί
+            ctx.drawImage(img, 0, 0, 1000, 1000);
         }
 
-        // 2. ΠΡΑΣΙΝΟ ΠΛΑΙΣΙΟ - ΛΕΠΤΟ
+        // 2. ΠΡΑΣΙΝΟ ΠΛΑΙΣΙΟ - *ΤΟΜΗ:* ΤΟ ΜΕΓΑΛΩΝΟΥΜΕ ΛΙΓΟ ΓΙΑ ΝΑ ΑΝΟΙΞΕΙ
         ctx.beginPath();
-        ctx.arc(cx, cy, 396, 0, 2 * Math.PI);
+        // Ακτίνα 498 (αντί για 492) για να "αναπνεύσει" Ανατολικά-Δυτικά
+        ctx.arc(cx, cy, 498, 0, 2 * Math.PI);
         ctx.strokeStyle = green;
-        ctx.lineWidth = 5;
+        ctx.lineWidth = 4;
         ctx.stroke();
 
         // 3. ΔΕΙΚΤΕΣ (ΩΡΑ - ΛΕΠΤΟ)
-        drawH(h * 30, 200, 14, green); // Ώρα
-        drawH(m * 6, 310, 8, green);   // Λεπτό
+        drawH(h * 30, 250, 16, green);
+        drawH(m * 6, 380, 10, green);
 
-        // 4. ΔΕΥΤΕΡΟΛΕΠΤΗΣ (ΓΗΛΟΦΟΣ)
+        // 4. ΔΕΥΤΕΡΟΛΕΠΤΗΣ (ΓΗΛΟΦΟΣ) - ΚΟΝΤΟΣ
         const ang = s * 6;
         const rad = (ang - 90) * Math.PI / 180;
         ctx.beginPath();
         ctx.strokeStyle = green;
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 2.5;
         ctx.moveTo(cx, cy);
-        ctx.lineTo(cx + 310 * Math.cos(rad), cy + 310 * Math.sin(rad));
+        ctx.lineTo(cx + 380 * Math.cos(rad), cy + 380 * Math.sin(rad));
         ctx.stroke();
 
-        // Κείμενο ΓΗΛΟΦΟΣ πάνω στον δείκτη
         ctx.save();
         ctx.translate(cx, cy);
         ctx.rotate(rad);
-        ctx.font = "bold 34px Arial";
+        ctx.font = "bold 38px Arial";
         ctx.fillStyle = green;
         ctx.textAlign = "center";
         ctx.textBaseline = "bottom"; 
         if (ang > 0 && ang < 180) {
-            ctx.fillText("ΓΗΛΟΦΟΣ", 160, -5); 
+            ctx.fillText("ΓΗΛΟΦΟΣ", 200, -8); 
         } else {
             ctx.rotate(Math.PI);
-            ctx.fillText("ΓΗΛΟΦΟΣ", -160, -5);
+            ctx.fillText("ΓΗΛΟΦΟΣ", -200, -8);
         }
         ctx.restore();
 
-        // Κεντρική μπίλια
-        ctx.beginPath(); ctx.arc(cx, cy, 8, 0, 2*Math.PI); ctx.fillStyle = green; ctx.fill();
+        // ΚΕΝΤΡΟ
+        ctx.beginPath(); ctx.arc(cx, cy, 10, 0, 2*Math.PI); ctx.fillStyle = green; ctx.fill();
         
         requestAnimationFrame(draw);
     }
 
     function drawH(a, l, w, c) {
         const r = (a - 90) * Math.PI / 180;
-        ctx.beginPath(); 
-        ctx.strokeStyle = c; 
-        ctx.lineWidth = w; 
-        ctx.lineCap = "round";
-        ctx.moveTo(400, 400); 
-        ctx.lineTo(400 + l * Math.cos(r), 400 + l * Math.sin(r));
-        ctx.stroke();
+        ctx.beginPath(); ctx.strokeStyle = c; ctx.lineWidth = w; ctx.lineCap = "round";
+        ctx.moveTo(500, 500); ctx.lineTo(500 + l * Math.cos(r), 500 + l * Math.sin(r)); ctx.stroke();
     }
-
     img.onload = () => draw();
-    if (img.complete) draw();
 </script>
 </body>
 </html>
