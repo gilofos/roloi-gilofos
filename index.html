@@ -2,10 +2,25 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>ΓΗΛΟΦΟΣ - Perfect Line</title>
+    <title>ΓΗΛΟΦΟΣ - Perfect Symmetry</title>
     <style>
-        body { background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-        canvas { width: 600px; height: 600px; max-width: 98vw; max-height: 98vw; }
+        body { 
+            background: #000; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            overflow: hidden; 
+        }
+        /* ΕΔΩ ΕΠΙΒΑΛΛΟΥΜΕ ΤΟΝ ΚΥΚΛΟ: Το ύψος και το πλάτος είναι ΙΔΙΑ */
+        canvas { 
+            width: 600px; 
+            height: 600px; 
+            max-width: 90vw; 
+            max-height: 90vw; 
+            aspect-ratio: 1 / 1; 
+        }
     </style>
 </head>
 <body>
@@ -32,11 +47,11 @@
         drawH(h * 30, 200, 15, green);
         drawH(m * 6, 300, 10, green);
 
-        // 2. ΔΕΥΤΕΡΟΛΕΠΤΑ & ΓΗΛΟΦΟΣ (Πάνω στη γραμμή)
+        // 2. ΔΕΥΤΕΡΟΛΕΠΤΑ & ΓΗΛΟΦΟΣ
         const ang = s * 6;
         const rad = (ang - 90) * Math.PI / 180;
         
-        // Σχεδίαση της γραμμής
+        // Γραμμή δευτερολέπτων
         ctx.beginPath();
         ctx.strokeStyle = green;
         ctx.lineWidth = 2;
@@ -44,28 +59,30 @@
         ctx.lineTo(cx + 360 * Math.cos(rad), cy + 360 * Math.sin(rad));
         ctx.stroke();
 
-        // 3. ΕΥΘΥΓΡΑΜΜΙΣΗ ΛΕΞΗΣ
+        // 3. ΕΞΥΠΝΗ ΠΕΡΙΣΤΡΟΦΗ ΛΕΞΗΣ (Αλλαγή στο 12 και στο 6)
         ctx.save();
         ctx.translate(cx, cy);
-        ctx.rotate(rad); // Περιστροφή ακριβώς όσο η ακτίνα
+        ctx.rotate(rad);
 
-        ctx.font = "bold 40px Arial";
+        ctx.font = "bold 42px Arial";
         ctx.fillStyle = green;
         ctx.textAlign = "center";
-        ctx.textBaseline = "bottom"; // Πατάει πάνω στη γραμμή
 
-        // Flip logic για να μη διαβάζεται ανάποδα (από 90 έως 270 μοίρες)
-        if (ang > 90 && ang < 270) {
-            ctx.translate(200, 0); // Μετατόπιση στη μέση του δείκτη
-            ctx.rotate(Math.PI);    // Τούμπα 180 μοίρες
-            ctx.fillText("ΓΗΛΟΦΟΣ", 0, -5); 
+        // Έλεγχος: Από το 0 έως το 180 (12 έως 6) και από 180 έως 360 (6 έως 12)
+        if (ang > 0 && ang < 180) {
+            // Δεξί μισό: Η λέξη κοιτάζει προς τα έξω/κάτω
+            ctx.textBaseline = "top"; 
+            ctx.fillText("ΓΗΛΟΦΟΣ", 200, 5); 
         } else {
-            ctx.fillText("ΓΗΛΟΦΟΣ", 200, -5); 
+            // Αριστερό μισό: Τουμπάρουμε τη λέξη για να διαβάζεται από κάτω προς τα πάνω
+            ctx.rotate(Math.PI);
+            ctx.textBaseline = "top";
+            ctx.fillText("ΓΗΛΟΦΟΣ", -200, 5);
         }
         ctx.restore();
 
         // Κέντρο
-        ctx.beginPath(); ctx.arc(cx, cy, 10, 0, 2*Math.PI); ctx.fillStyle = green; ctx.fill();
+        ctx.beginPath(); ctx.arc(cx, cy, 12, 0, 2*Math.PI); ctx.fillStyle = green; ctx.fill();
         
         requestAnimationFrame(draw);
     }
