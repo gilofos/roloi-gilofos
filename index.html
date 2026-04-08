@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <link rel="manifest" href="manifest.json?v=2">
-    <link rel="icon" type="image/png" href="myicon_transparent.png?v=2">
-    <link rel="apple-touch-icon" href="myicon_transparent.png?v=2">
+    <link rel="manifest" href="manifest.json?v=3">
+    <link rel="icon" type="image/png" href="icon2026.png">
+    <link rel="apple-touch-icon" href="icon2026.png">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -60,3 +60,48 @@
         const rad = (ang - 90) * Math.PI / 180;
         
         ctx.beginPath();
+        ctx.strokeStyle = green;
+        ctx.lineWidth = 2;
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + 360 * Math.cos(rad), cy + 360 * Math.sin(rad));
+        ctx.stroke();
+
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(rad);
+        ctx.font = "bold 42px Arial";
+        ctx.fillStyle = green;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "bottom"; 
+
+        if (ang > 0 && ang < 180) {
+            ctx.fillText("ΓΗΛΟΦΟΣ", 200, -5); 
+        } else {
+            ctx.rotate(Math.PI);
+            ctx.fillText("ΓΗΛΟΦΟΣ", -200, -5);
+        }
+        ctx.restore();
+
+        ctx.beginPath(); 
+        ctx.arc(cx, cy, 12, 0, 2*Math.PI); 
+        ctx.fillStyle = green; 
+        ctx.fill();
+        
+        requestAnimationFrame(draw);
+    }
+
+    function drawH(a, l, w, c) {
+        const r = (a - 90) * Math.PI / 180;
+        ctx.beginPath(); 
+        ctx.strokeStyle = c;
+        ctx.lineWidth = w; 
+        ctx.lineCap = "round";
+        ctx.moveTo(400, 400); 
+        ctx.lineTo(400 + l * Math.cos(r), 400 + l * Math.sin(r));
+        ctx.stroke();
+    }
+
+    img.onload = () => draw();
+</script>
+</body>
+</html>
