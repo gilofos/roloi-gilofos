@@ -27,8 +27,8 @@
         canvas { 
             width: 600px; 
             height: 600px; 
-            max-width: 95vw; 
-            max-height: 95vw; 
+            max-width: 90vw; /* Λίγο πιο μικρό για να μην κολλάει στις άκρες του κινητού */
+            max-height: 90vw; 
             aspect-ratio: 1 / 1; 
         }
     </style>
@@ -48,14 +48,25 @@
         const h = (now.getHours() % 12) + m / 60;
         
         ctx.clearRect(0, 0, 800, 800);
-        if (img.complete) ctx.drawImage(img, 0, 0, 800, 800);
         
         const green = "#39FF14";
         const cx = 400, cy = 400;
 
+        // 1. ΣΧΕΔΙΑΣΗ ΕΞΩΤΕΡΙΚΟΥ ΠΛΑΙΣΙΟΥ (Ο ΚΥΚΛΟΣ ΠΟΥ ΗΘΕΛΕΣ)
+        ctx.beginPath();
+        ctx.arc(cx, cy, 390, 0, 2 * Math.PI); // Σχεδόν στην άκρη του canvas
+        ctx.strokeStyle = green;
+        ctx.lineWidth = 15; // Παχύ πλαίσιο για στυλ
+        ctx.stroke();
+
+        // 2. ΣΧΕΔΙΑΣΗ ΤΗΣ ΕΙΚΟΝΑΣ (FACE) ΜΕΣΑ ΣΤΟ ΠΛΑΙΣΙΟ
+        if (img.complete) ctx.drawImage(img, 10, 10, 780, 780);
+        
+        // Σχέδιαση Δεικτών
         drawH(h * 30, 200, 15, green);
         drawH(m * 6, 300, 10, green);
 
+        // 3. ΔΕΥΤΕΡΟΛΕΠΤΗΣ (ΓΗΛΟΦΟΣ) - Τον κονταίνουμε ελάχιστα για να μη βρίσκει στο πλαίσιο
         const ang = s * 6;
         const rad = (ang - 90) * Math.PI / 180;
         
@@ -63,7 +74,8 @@
         ctx.strokeStyle = green;
         ctx.lineWidth = 2;
         ctx.moveTo(cx, cy);
-        ctx.lineTo(cx + 360 * Math.cos(rad), cy + 360 * Math.sin(rad));
+        // Από 360 το πήγαμε 350 για να μην ακουμπάει το νέο πλαίσιο
+        ctx.lineTo(cx + 350 * Math.cos(rad), cy + 350 * Math.sin(rad));
         ctx.stroke();
 
         ctx.save();
@@ -74,14 +86,16 @@
         ctx.textAlign = "center";
         ctx.textBaseline = "bottom"; 
 
+        // Η λέξη ΓΗΛΟΦΟΣ κεντραρισμένη πάνω στον δείκτη
         if (ang > 0 && ang < 180) {
-            ctx.fillText("ΓΗΛΟΦΟΣ", 200, -5); 
+            ctx.fillText("ΓΗΛΟΦΟΣ", 180, -5); 
         } else {
             ctx.rotate(Math.PI);
-            ctx.fillText("ΓΗΛΟΦΟΣ", -200, -5);
+            ctx.fillText("ΓΗΛΟΦΟΣ", -180, -5);
         }
         ctx.restore();
 
+        // Κεντρική τελεία
         ctx.beginPath(); 
         ctx.arc(cx, cy, 12, 0, 2*Math.PI); 
         ctx.fillStyle = green; 
