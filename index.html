@@ -7,14 +7,16 @@
     <style>
         body { background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
         canvas { 
-            width: 98vmin; 
-            height: 98vmin; 
-            object-fit: contain;
+            /* Του δίνουμε 5% παραπάνω πλάτος για να μην "αυγουλάζει" στον browser */
+            width: 95vw; 
+            height: auto;
+            aspect-ratio: 1.05 / 1;
+            object-fit: fill;
         }
     </style>
 </head>
 <body>
-<canvas id="c" width="800" height="800"></canvas>
+<canvas id="c" width="840" height="800"></canvas>
 <script>
     const canvas = document.getElementById('c');
     const ctx = canvas.getContext('2d');
@@ -27,37 +29,36 @@
         const m = now.getMinutes() + s / 60;
         const h = (now.getHours() % 12) + m / 60;
         
-        // Καθαρίζουμε τον καμβά
-        ctx.clearRect(0, 0, 800, 800);
+        ctx.fillStyle = "#000";
+        ctx.fillRect(0, 0, 840, 800);
+        
         const green = "#39FF14";
-        const cx = 400, cy = 400;
+        const cx = 420; // Κέντρο στο νέο πλάτος
+        const cy = 400;
 
-        // 1. ΣΧΕΔΙΑΣΗ ΤΗΣ ΕΙΚΟΝΑΣ ΣΟΥ (ΣΚΕΤΗ ΚΑΙ ΣΤΡΟΓΓΥΛΗ)
         if (img.complete) {
-            ctx.drawImage(img, 0, 0, 800, 800);
+            // Τεντώνουμε την εικόνα οριζόντια για να διορθώσουμε το "αυγό"
+            ctx.drawImage(img, 0, 0, 840, 800);
         }
 
-        // --- ΤΟ ΠΡΑΣΙΝΟ ΣΤΕΦΑΝΙ ΤΟΥ ΚΩΔΙΚΑ ΔΙΑΓΡΑΦΗΚΕ ---
+        // ΔΕΙΚΤΕΣ (ΩΡΑ - ΛΕΠΤΟ)
+        drawH(h * 30, 200, 14, green);
+        drawH(m * 6, 310, 8, green);
 
-        // 2. ΔΕΙΚΤΕΣ (ΩΡΑ - ΛΕΠΤΟ)
-        drawH(h * 30, 200, 14, green); // Ώρα
-        drawH(m * 6, 300, 8, green);   // Λεπτό
-
-        // 3. ΔΕΥΤΕΡΟΛΕΠΤΗΣ (ΓΗΛΟΦΟΣ)
+        // ΔΕΥΤΕΡΟΛΕΠΤΗΣ (ΓΗΛΟΦΟΣ)
         const ang = s * 6;
         const rad = (ang - 90) * Math.PI / 180;
         ctx.beginPath();
         ctx.strokeStyle = green;
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 2.5;
         ctx.moveTo(cx, cy);
         ctx.lineTo(cx + 310 * Math.cos(rad), cy + 310 * Math.sin(rad));
         ctx.stroke();
 
-        // ΚΕΙΜΕΝΟ ΓΗΛΟΦΟΣ
         ctx.save();
         ctx.translate(cx, cy);
         ctx.rotate(rad);
-        ctx.font = "bold 34px Arial";
+        ctx.font = "bold 36px Arial";
         ctx.fillStyle = green;
         ctx.textAlign = "center";
         ctx.textBaseline = "bottom"; 
@@ -69,8 +70,8 @@
         }
         ctx.restore();
 
-        // ΚΕΝΤΡΙΚΗ ΜΠΙΛΙΑ
-        ctx.beginPath(); ctx.arc(cx, cy, 8, 0, 2*Math.PI); ctx.fillStyle = green; ctx.fill();
+        // ΚΕΝΤΡΟ
+        ctx.beginPath(); ctx.arc(cx, cy, 10, 0, 2*Math.PI); ctx.fillStyle = green; ctx.fill();
         
         requestAnimationFrame(draw);
     }
@@ -78,7 +79,7 @@
     function drawH(a, l, w, c) {
         const r = (a - 90) * Math.PI / 180;
         ctx.beginPath(); ctx.strokeStyle = c; ctx.lineWidth = w; ctx.lineCap = "round";
-        ctx.moveTo(400, 400); ctx.lineTo(400 + l * Math.cos(r), 400 + l * Math.sin(r)); ctx.stroke();
+        ctx.moveTo(420, 400); ctx.lineTo(420 + l * Math.cos(r), 400 + l * Math.sin(r)); ctx.stroke();
     }
     img.onload = () => draw();
 </script>
