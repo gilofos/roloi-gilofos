@@ -2,25 +2,11 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>ΓΗΛΟΦΟΣ - Perfect Symmetry</title>
+    <title>ΓΗΛΟΦΟΣ - On Top Alignment</title>
     <style>
-        body { 
-            background: #000; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            margin: 0; 
-            overflow: hidden; 
-        }
-        /* ΕΔΩ ΕΠΙΒΑΛΛΟΥΜΕ ΤΟΝ ΚΥΚΛΟ: Το ύψος και το πλάτος είναι ΙΔΙΑ */
-        canvas { 
-            width: 600px; 
-            height: 600px; 
-            max-width: 90vw; 
-            max-height: 90vw; 
-            aspect-ratio: 1 / 1; 
-        }
+        body { background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
+        /* Τέλειος κύκλος */
+        canvas { width: 600px; height: 600px; max-width: 90vw; max-height: 90vw; aspect-ratio: 1 / 1; }
     </style>
 </head>
 <body>
@@ -51,7 +37,6 @@
         const ang = s * 6;
         const rad = (ang - 90) * Math.PI / 180;
         
-        // Γραμμή δευτερολέπτων
         ctx.beginPath();
         ctx.strokeStyle = green;
         ctx.lineWidth = 2;
@@ -59,7 +44,7 @@
         ctx.lineTo(cx + 360 * Math.cos(rad), cy + 360 * Math.sin(rad));
         ctx.stroke();
 
-        // 3. ΕΞΥΠΝΗ ΠΕΡΙΣΤΡΟΦΗ ΛΕΞΗΣ (Αλλαγή στο 12 και στο 6)
+        // 3. Η ΛΕΞΗ ΠΑΝΩ ΣΤΟ ΔΕΙΚΤΗ
         ctx.save();
         ctx.translate(cx, cy);
         ctx.rotate(rad);
@@ -67,17 +52,17 @@
         ctx.font = "bold 42px Arial";
         ctx.fillStyle = green;
         ctx.textAlign = "center";
+        
+        // Χρησιμοποιούμε bottom για να κάθεται ΠΑΝΩ στη γραμμή
+        ctx.textBaseline = "bottom"; 
 
-        // Έλεγχος: Από το 0 έως το 180 (12 έως 6) και από 180 έως 360 (6 έως 12)
         if (ang > 0 && ang < 180) {
-            // Δεξί μισό: Η λέξη κοιτάζει προς τα έξω/κάτω
-            ctx.textBaseline = "top"; 
-            ctx.fillText("ΓΗΛΟΦΟΣ", 200, 5); 
+            // Δεξί μισό (12 έως 6): Η λέξη "πατάει" πάνω στη γραμμή
+            ctx.fillText("ΓΗΛΟΦΟΣ", 200, -5); 
         } else {
-            // Αριστερό μισό: Τουμπάρουμε τη λέξη για να διαβάζεται από κάτω προς τα πάνω
+            // Αριστερό μισό (6 έως 12): Τουμπάρει και πάλι "πατάει" πάνω στη γραμμή
             ctx.rotate(Math.PI);
-            ctx.textBaseline = "top";
-            ctx.fillText("ΓΗΛΟΦΟΣ", -200, 5);
+            ctx.fillText("ΓΗΛΟΦΟΣ", -200, -5);
         }
         ctx.restore();
 
