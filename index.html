@@ -5,18 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ΩΡΑ ΓΗΛΟΦΟΥ</title>
     <style>
-        body { background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
+        body { 
+            background: #000; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            overflow: hidden; 
+        }
         canvas { 
-            /* Του δίνουμε 5% παραπάνω πλάτος για να μην "αυγουλάζει" στον browser */
-            width: 95vw; 
-            height: auto;
-            aspect-ratio: 1.05 / 1;
-            object-fit: fill;
+            /* Μαζεύουμε το μέγεθος για να χωράει άνετα στην οθόνη */
+            max-width: 92vw; 
+            max-height: 92vh;
+            object-fit: contain;
         }
     </style>
 </head>
 <body>
-<canvas id="c" width="840" height="800"></canvas>
+<canvas id="c" width="820" height="800"></canvas>
 <script>
     const canvas = document.getElementById('c');
     const ctx = canvas.getContext('2d');
@@ -30,18 +37,19 @@
         const h = (now.getHours() % 12) + m / 60;
         
         ctx.fillStyle = "#000";
-        ctx.fillRect(0, 0, 840, 800);
+        ctx.fillRect(0, 0, 820, 800);
         
         const green = "#39FF14";
-        const cx = 420; // Κέντρο στο νέο πλάτος
+        const cx = 410; // Το νέο κέντρο για να είναι ζυγισμένο
         const cy = 400;
 
         if (img.complete) {
-            // Τεντώνουμε την εικόνα οριζόντια για να διορθώσουμε το "αυγό"
-            ctx.drawImage(img, 0, 0, 840, 800);
+            // Σχεδιάζουμε την εικόνα με 820 πλάτος για να στρογγυλέψει
+            // χωρίς να βγαίνει έξω από το πλάνο
+            ctx.drawImage(img, 0, 0, 820, 800);
         }
 
-        // ΔΕΙΚΤΕΣ (ΩΡΑ - ΛΕΠΤΟ)
+        // ΔΕΙΚΤΕΣ
         drawH(h * 30, 200, 14, green);
         drawH(m * 6, 310, 8, green);
 
@@ -79,7 +87,7 @@
     function drawH(a, l, w, c) {
         const r = (a - 90) * Math.PI / 180;
         ctx.beginPath(); ctx.strokeStyle = c; ctx.lineWidth = w; ctx.lineCap = "round";
-        ctx.moveTo(420, 400); ctx.lineTo(420 + l * Math.cos(r), 400 + l * Math.sin(r)); ctx.stroke();
+        ctx.moveTo(410, 400); ctx.lineTo(410 + l * Math.cos(r), 400 + l * Math.sin(r)); ctx.stroke();
     }
     img.onload = () => draw();
 </script>
