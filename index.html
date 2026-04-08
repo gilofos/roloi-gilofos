@@ -2,10 +2,9 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>ΓΗΛΟΦΟΣ - On Top Alignment</title>
+    <title>ΓΗΛΟΦΟΣ - Smart Clock</title>
     <style>
         body { background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-        /* Τέλειος κύκλος */
         canvas { width: 600px; height: 600px; max-width: 90vw; max-height: 90vw; aspect-ratio: 1 / 1; }
     </style>
 </head>
@@ -16,6 +15,20 @@
     const ctx = canvas.getContext('2d');
     const img = new Image();
     img.src = 'face.png';
+
+    let temp = "--°C"; // Αρχική τιμή θερμοκρασίας
+
+    // Λειτουργία για να παίρνουμε τον καιρό (Γήλοφος)
+    async function getWeather() {
+        try {
+            // Χρησιμοποιούμε ένα ελεύθερο API για τη θερμοκρασία της περιοχής
+            const response = await fetch('https://open-meteo.com');
+            const data = await response.json();
+            temp = Math.round(data.current_weather.temperature) + "°C";
+        } catch (e) { temp = ""; }
+    }
+    getWeather();
+    setInterval(getWeather, 600000); // Ανανέωση κάθε 10 λεπτά
 
     function draw() {
         const now = new Date();
@@ -29,11 +42,25 @@
         const green = "#39FF14";
         const cx = 400, cy = 400;
 
-        // 1. Δείκτες Ώρας & Λεπτών
+        // --- 1. ΠΛΗΡΟΦΟΡΙΕΣ (ΗΜΕΡΟΜΗΝΙΑ & ΚΑΙΡΟΣ) ---
+        ctx.fillStyle = green;
+        ctx.textAlign = "center";
+        
+        // Ημερομηνία κάτω από το κέντρο
+        ctx.font = "30px Arial";
+        const options = { weekday: 'long', day: 'numeric', month: 'long' };
+        const dateStr = now.toLocaleDateString('el-GR', options);
+        ctx.fillText(dateStr.toUpperCase(), cx, cy + 120);
+
+        // Θερμοκρασία πάνω από το κέντρο
+        ctx.font = "bold 35px Arial";
+        ctx.fillText(temp, cx, cy - 120);
+
+        // --- 2. ΔΕΙΚΤΕΣ ΩΡΑΣ & ΛΕΠΤΩΝ ---
         drawH(h * 30, 200, 15, green);
         drawH(m * 6, 300, 10, green);
 
-        // 2. ΔΕΥΤΕΡΟΛΕΠΤΑ & ΓΗΛΟΦΟΣ
+        // --- 3. ΓΗΛΟΦΟΣ ΣΤΑ ΔΕΥΤΕΡΟΛΕΠΤΑ ---
         const ang = s * 6;
         const rad = (ang - 90) * Math.PI / 180;
         
@@ -44,23 +71,15 @@
         ctx.lineTo(cx + 360 * Math.cos(rad), cy + 360 * Math.sin(rad));
         ctx.stroke();
 
-        // 3. Η ΛΕΞΗ ΠΑΝΩ ΣΤΟ ΔΕΙΚΤΗ
         ctx.save();
         ctx.translate(cx, cy);
         ctx.rotate(rad);
-
         ctx.font = "bold 42px Arial";
-        ctx.fillStyle = green;
-        ctx.textAlign = "center";
-        
-        // Χρησιμοποιούμε bottom για να κάθεται ΠΑΝΩ στη γραμμή
         ctx.textBaseline = "bottom"; 
 
         if (ang > 0 && ang < 180) {
-            // Δεξί μισό (12 έως 6): Η λέξη "πατάει" πάνω στη γραμμή
             ctx.fillText("ΓΗΛΟΦΟΣ", 200, -5); 
         } else {
-            // Αριστερό μισό (6 έως 12): Τουμπάρει και πάλι "πατάει" πάνω στη γραμμή
             ctx.rotate(Math.PI);
             ctx.fillText("ΓΗΛΟΦΟΣ", -200, -5);
         }
