@@ -1,6 +1,14 @@
 {
   "short_name": "Ρολόι",
-  "name": "Ρολόι Γήλοφος",
+  "name": "ΩΡΑ ΓΗΛΟΦΟΥ",
+  "icons": [
+    {
+      "src": "myicon_transparent.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#000000",
