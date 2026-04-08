@@ -2,11 +2,30 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <title>ΓΗΛΟΦΟΣ - On Top Alignment</title>
     <style>
-        body { background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
+        body { 
+            background: #000; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            overflow: hidden; 
+        }
         /* Τέλειος κύκλος */
-        canvas { width: 600px; height: 600px; max-width: 90vw; max-height: 90vw; aspect-ratio: 1 / 1; }
+        canvas { 
+            width: 600px; 
+            height: 600px; 
+            max-width: 95vw; 
+            max-height: 95vw; 
+            aspect-ratio: 1 / 1; 
+        }
     </style>
 </head>
 <body>
@@ -53,29 +72,33 @@
         ctx.fillStyle = green;
         ctx.textAlign = "center";
         
-        // Χρησιμοποιούμε bottom για να κάθεται ΠΑΝΩ στη γραμμή
         ctx.textBaseline = "bottom"; 
 
         if (ang > 0 && ang < 180) {
-            // Δεξί μισό (12 έως 6): Η λέξη "πατάει" πάνω στη γραμμή
             ctx.fillText("ΓΗΛΟΦΟΣ", 200, -5); 
         } else {
-            // Αριστερό μισό (6 έως 12): Τουμπάρει και πάλι "πατάει" πάνω στη γραμμή
             ctx.rotate(Math.PI);
             ctx.fillText("ΓΗΛΟΦΟΣ", -200, -5);
         }
         ctx.restore();
 
         // Κέντρο
-        ctx.beginPath(); ctx.arc(cx, cy, 12, 0, 2*Math.PI); ctx.fillStyle = green; ctx.fill();
+        ctx.beginPath(); 
+        ctx.arc(cx, cy, 12, 0, 2*Math.PI); 
+        ctx.fillStyle = green; 
+        ctx.fill();
         
         requestAnimationFrame(draw);
     }
 
     function drawH(a, l, w, c) {
         const r = (a - 90) * Math.PI / 180;
-        ctx.beginPath(); ctx.strokeStyle = c; ctx.lineWidth = w; ctx.lineCap = "round";
-        ctx.moveTo(400, 400); ctx.lineTo(400 + l * Math.cos(r), 400 + l * Math.sin(r));
+        ctx.beginPath(); 
+        ctx.strokeStyle = c;
+        ctx.lineWidth = w; 
+        ctx.lineCap = "round";
+        ctx.moveTo(400, 400); 
+        ctx.lineTo(400 + l * Math.cos(r), 400 + l * Math.sin(r));
         ctx.stroke();
     }
 
@@ -83,4 +106,3 @@
 </script>
 </body>
 </html>
-
