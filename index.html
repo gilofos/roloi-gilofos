@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        canvas { max-width: 100%; height: auto; }
+    </style>
+</head>
+<body>
+<canvas id="c" width="600" height="600"></canvas>
+<script>
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    img.src = 'face.png';
+
+    function draw() {
+        const now = new Date();
+        const s = now.getSeconds() + now.getMilliseconds() / 1000;
+        const m = now.getMinutes() + s / 60;
+        const h = (now.getHours() % 12) + m / 60;
+        ctx.clearRect(0, 0, 600, 600);
+        if (img.complete) ctx.drawImage(img, 0, 0, 600, 600);
+        const green = "#39FF14";
+
+        // Hands
+        drawH(h * 30, 140, 10, green);
+        drawH(m * 6, 200, 6, green);
+
+        // Smart GHLOFOS
+        const ang = s * 6;
+        ctx.save();
+        ctx.translate(300, 300);
+        ctx.rotate(ang * Math.PI / 180);
+        ctx.font = "bold 35px Arial";
+        ctx.fillStyle = green;
+        ctx.textAlign = "center";
+        if (ang > 90 && ang < 270) {
+            ctx.rotate(Math.PI);
+            ctx.fillText("ΓΗΛΟΦΟΣ", -140, 0);
+        } else {
+            ctx.fillText("ΓΗΛΟΦΟΣ", 140, 0);
+        }
+        ctx.restore();
+
+        // Seconds line
+        const r = (ang - 90) * Math.PI / 180;
+        ctx.beginPath(); ctx.strokeStyle = green; ctx.lineWidth = 2;
+        ctx.moveTo(300, 300); ctx.lineTo(300 + 240 * Math.cos(r), 300 + 240 * Math.sin(r));
+        ctx.stroke();
+        
+        requestAnimationFrame(draw);
+    }
+
+    function drawH(a, l, w, c) {
+        const r = (a - 90) * Math.PI / 180;
+        ctx.beginPath(); ctx.strokeStyle = c; ctx.lineWidth = w; ctx.lineCap = "round";
+        ctx.moveTo(300, 300); ctx.lineTo(300 + l * Math.cos(r), 300 + l * Math.sin(r));
+        ctx.stroke();
+    }
+    img.onload = () => draw();
+</script>
+</body>
+</html>
